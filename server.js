@@ -109,6 +109,30 @@ app.post("/claim/offer", async (req, res) => {
     return res.json(claimQR)
 });
 
+app.post("/claim/mint", async (req, res) => {
+    const { tid, uuid } = req.body;
+    const claimTID = await mintClaim(tid, uuid)
+    try {
+        const claimQR = await claimEZ(uuid, claimTID.issuer, claimTID.tid)
+        return res.json(claimQR)
+    } catch (e) {
+        console.log(e)
+        return res.json("Unknown Error")
+    }
+})
+
+app.post("/airdrop/mint", async (req, res) => {
+    const { uuid } = req.body;
+    const claimTID = await mintAirdrop(uuid)
+    try {
+        const claimQR = await claimEZ(uuid, claimTID.issuer, claimTID.tid)
+        return res.json(claimQR)
+    } catch (e) {
+        console.log(e)
+        return res.json("Unknown Error")
+    }
+})
+
 // Get all NFTs associated with a given account and optionally a list of issuers
 app.post("/nfts", async (req, res) => {
     const account = req.headers["account"];
